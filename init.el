@@ -29,7 +29,7 @@
 ;;; enable use-package
 (require 'use-package)
 (setq use-package-always-ensure t)
-(setq use-package-always-pin "melpa-stable")
+;; (setq use-package-always-pin "melpa-stable")
 (setq use-package-verbose t)
 
 ;;; load your preferred theme
@@ -72,8 +72,8 @@
 
 ;;; comapany-mode!
 (use-package company
-  :init
-  (global-company-mode 1)
+  :config
+  (global-company-mode)
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
         company-selection-wrap-around t)
