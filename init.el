@@ -11,62 +11,15 @@
 ;;;
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 
-(setq package-pinned-packages
-      '((projectile . "melpa-stable")
-        (exec-path-from-shell . "melpa-stable")
-        (use-package . "melpa-stable")
-        (bind-key . "melpa-stable")
-        (mykie . "melpa-stable")
-        (company . "melpa-stable")
-        (zenburn-theme . "melpa-stable")
-        ;; helm
-        (helm . "melpa-stable")
-        (helm-projectile . "melpa-stable")
-        (helm-company . "melpa")
-        ;; lisp
-        (paredit . "melpa-stable")
-        (rainbow-delimiters . "melpa-stable")
-        ;; clojure
-        (clojure-mode . "melpa-stable")
-        (clojure-mode-extra-font-locking . "melpa-stable")
-        (cider . "melpa-stable")
-        (clj-refactor . "melpa-stable")))
 (package-initialize)
+(unless package-archive-contents (package-refresh-contents))
 
-;;; using packages
-(defvar my-packages
-  '(projectile
-    exec-path-from-shell
-    use-package
-    bind-key
-    mykie
-    company ;; like auto complete
-    ;; if you don't like this theme, you can choose your preferred theme from https://emacsthemes.com/
-    zenburn-theme
-
-    ;; helm stuffs
-    helm
-    helm-projectile
-    helm-company
-
-    ;; for lisp
-    paredit
-    rainbow-delimiters
-
-    ;; for clojure
-    clojure-mode
-    clojure-mode-extra-font-locking
-    cider
-    clj-refactor))
-
-(dolist (p my-packages)
-  (unless package-archive-contents
-    (package-refresh-contents))
-  (unless (package-installed-p p)
-    (package-install p)))
+(when (not (require 'use-package nil t))
+  (package-install 'use-package))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
 ;;;
@@ -75,13 +28,20 @@
 
 ;;; enable use-package
 (require 'use-package)
+(setq use-package-always-ensure t)
+(setq use-package-always-pin "melpa-stable")
+(setq use-package-verbose t)
 
 ;;; load your preferred theme
-(load-theme 'zenburn t)
+(use-package zenburn-theme
+  :config
+  (load-theme 'zenburn t))
 
 ;;; set up exec-path
-(when (memq window-system '(mac x))
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 ;;; global keymap
 (use-package bind-key
@@ -122,7 +82,8 @@
              ("C-i" . company-complete))
   (bind-keys :map company-active-map
              ("C-n" . company-select-next)
-             ("C-p" . company-select-previous))
+             ("C-p" . company-select-previous)
+             ("C-s" . company-search-words-regexp))
   (bind-keys :map company-search-map
              ("C-n" . company-select-next)
              ("C-p" . company-select-previous)))
@@ -160,14 +121,11 @@
 ;; show me empty lines after buffer end
 (set-default 'indicate-empty-lines t)
 (setq-default indicate-buffer-boundaries 'right)
-
-(use-package uniquify
-  :init
-  (setq uniquify-buffer-name-style 'post-forward))
+(setq uniquify-buffer-name-style 'post-forward)
 
 ;; whitespace
 (use-package whitespace
-  :init
+  :config
   (setq whitespace-style '(face
                            trailing
                            tabs
@@ -186,7 +144,7 @@
 (add-hook 'before-save-hook 'whitespace-cleanup)
 
 (use-package hl-line
-  :init
+  :config
   (global-hl-line-mode 1)
   (set-face-background 'hl-line "#525252"))
 
@@ -245,7 +203,6 @@
 ;;;
 
 (use-package helm
-  :ensure t
   :config
   (setq helm-quick-update t
         helm-buffers-fuzzy-matching t
@@ -254,21 +211,14 @@
              ("M-x" . helm-M-x)))
 
 (use-package helm-projectile
-  :ensure t
   :config
   (mykie:set-keys nil
-    "C-x C-f"
-    :default (call-interactively 'find-file)
-    :C-u helm-projectile-find-file
-    "C-x b"
-    :default (call-interactively 'switch-to-buffer)
-    :C-u helm-projectile-switch-to-buffer))
-
-(use-package helm-company
-  :ensure t
-  :config
-  (bind-keys :map company-active-map
-             ("C-s" . helm-company)))
+                  "C-x C-f"
+                  :default (call-interactively 'find-file)
+                  :C-u helm-projectile-find-file
+                  "C-x b"
+                  :default (call-interactively 'switch-to-buffer)
+                  :C-u helm-projectile-switch-to-buffer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
 ;;;
@@ -311,22 +261,12 @@
 ;;;
 
 (use-package clojure-mode
-  :ensure t
-  :mode (("\\.clj\\'" . clojure-mode)
-         ("\\.cljs\\'" . clojure-mode)
-         ("\\.cljc\\'" . clojure-mode)
-         ("\\.cljx\\'" . clojure-mode)
-         ("\\.edn\\'" . clojure-mode))
   :init
   (add-hook 'clojure-mode-hook #'yas-minor-mode)
   (add-hook 'clojure-mode-hook #'subword-mode)
   (add-hook 'clojure-mode-hook #'my/lisp-mode-hook))
 
-(use-package clojure-mode-extra-font-locking)
-
 (use-package cider
-  :ensure t
-  :defer t
   :init
   (add-hook 'cider-mode-hook #'clj-refactor-mode)
   (add-hook 'cider-mode-hook #'company-mode)
@@ -342,13 +282,15 @@
         cider-overlays-use-font-lock t)
   (cider-repl-toggle-pretty-printing))
 
-(use-package cider-eval-sexp-fu
-  :defer t)
+(use-package cider-eval-sexp-fu)
 
 (use-package clj-refactor
-  :ensure t
-  :defer t
   :diminish clj-refactor-mode
   :config (cljr-add-keybindings-with-prefix "C-c j"))
 
 (message "init.el loaded!!")
+
+(add-hook 'after-init-hook
+          (lambda ()
+            (message "init time: %.3f sec"
+                     (float-time (time-subtract after-init-time before-init-time)))))
