@@ -210,15 +210,25 @@
   (bind-keys :map global-map
              ("M-x" . helm-M-x)))
 
-(use-package helm-projectile
+;; (use-package helm-projectile
+;;   :config
+;;   (mykie:set-keys nil
+;;     "C-x C-f"
+;;     :default (call-interactively 'find-file)
+;;     :C-u helm-projectile-find-file
+;;     "C-x b"
+;;     :default (call-interactively 'switch-to-buffer)
+;;     :C-u helm-projectile-switch-to-buffer))
+
+(use-package helm-ls-git
   :config
   (mykie:set-keys nil
-                  "C-x C-f"
-                  :default (call-interactively 'find-file)
-                  :C-u helm-projectile-find-file
-                  "C-x b"
-                  :default (call-interactively 'switch-to-buffer)
-                  :C-u helm-projectile-switch-to-buffer))
+    "C-x C-f"
+    :default (call-interactively 'find-file)
+    :C-u! helm-ls-git-ls))
+
+(use-package helm-ag
+  :bind ("C-x C-g" . helm-do-ag-project-root))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
 ;;;
