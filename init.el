@@ -304,3 +304,6 @@
           (lambda ()
             (message "init time: %.3f sec"
                      (float-time (time-subtract after-init-time before-init-time)))))
+                     
+;;C-h will always mean back-space
+(define-key key-translation-map [?\C-h] [?\C-?])
