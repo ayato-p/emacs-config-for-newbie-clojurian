@@ -1,4 +1,4 @@
-CURRENT_DATE = $(date +"%Y%m%d")
+CURRENT_DATE = $(shell date +"%Y%m%d")
 
 clean:
 	rm -rf ./elpa
