@@ -27,7 +27,11 @@
 ;;;
 
 ;;; enable use-package
-(require 'use-package)
+(eval-when-compile
+  (require 'use-package))
+(require 'diminish)
+(require 'bind-key)
+
 (setq use-package-always-ensure t)
 (setq use-package-always-pin "melpa-stable")
 (setq use-package-verbose t)
@@ -39,9 +43,9 @@
 
 ;;; set up exec-path
 (use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
   :config
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
+  (exec-path-from-shell-initialize))
 
 ;;; global keymap
 (use-package bind-key
@@ -66,8 +70,8 @@
          ("<tab>" . nil)
          ("TAB" . nil)
          ("C-i" . nil)
-         ("C-o" . yas/expand))
-  :init
+         ("C-o" . yas-expand))
+  :config
   (yas-global-mode 1))
 
 ;;; comapany-mode!
@@ -92,13 +96,8 @@
 (use-package magit
   :bind (("C-x g" . magit-status)))
 
-;;; projectile
-(use-package projectile
-  :init
-  (projectile-global-mode))
-
 (use-package subword
-  :init
+  :config
   (global-subword-mode 1))
 
 ;;; answering just 'y' or 'n' will do
@@ -210,14 +209,14 @@
   :bind (("M-x" . helm-M-x)
          :map helm-map
          ("C-h" . nil))
-  :config
+  :init
   (setq helm-quick-update t
         helm-buffers-fuzzy-matching t
         helm-ff-transformer-show-only-basename nil))
 
 (use-package helm-projectile
-  :config
-  (use-package helm-ls-git)
+  :commands (helm-projectile-find-file helm-projectile-switch-to-buffer)
+  :init
   (mykie:set-keys nil
     "C-x C-f"
     :default (call-interactively 'find-file)
@@ -225,7 +224,12 @@
     :C-u*2! helm-ls-git-ls
     "C-x b"
     :default (call-interactively 'switch-to-buffer)
-    :C-u helm-projectile-switch-to-buffer))
+    :C-u helm-projectile-switch-to-buffer)
+  :config
+  (use-package projectile
+    :init
+    (projectile-global-mode))
+  (use-package helm-ls-git))
 
 (use-package helm-ag
   :bind ("C-x C-g" . helm-do-ag-project-root))
@@ -245,6 +249,7 @@
   (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode))
 
 (use-package eldoc
+  :defer t
   :config
   (setq eldoc-idle-delay 0.1
         eldoc-minor-mode-string ""))
@@ -260,9 +265,9 @@
 (defun my/lisp-mode-hook ()
   (my/lisp-mode-defaults))
 
-
 (use-package lisp-mode
   :ensure nil
+  :mode ("\\.lisp\\'" "\\.el\\'")
   :config
   (add-hook 'emacs-lisp-mode-hook 'my/lisp-mode-hook))
 
@@ -272,30 +277,31 @@
 ;;;
 
 (use-package clojure-mode
-  :init
+  :mode ("\\.clj\\'" "\\.cljs\\'" "\\.cljc\\'" "\\.cljx\\'")
+  :config
   (add-hook 'clojure-mode-hook #'yas-minor-mode)
   (add-hook 'clojure-mode-hook #'subword-mode)
-  (add-hook 'clojure-mode-hook #'my/lisp-mode-hook))
+  (add-hook 'clojure-mode-hook #'my/lisp-mode-hook)
 
-(use-package cider
-  :init
-  (add-hook 'cider-mode-hook #'clj-refactor-mode)
-  (add-hook 'cider-mode-hook #'company-mode)
-  (add-hook 'cider-repl-mode-hook #'company-mode)
-  (add-hook 'cider-repl-mode-hook #'my/lisp-mode-hook)
-  :diminish subword-mode
-  :config
-  (setq nrepl-log-messages t
-        cider-repl-display-in-current-window t
-        cider-repl-use-clojure-font-lock t
-        cider-prompt-save-file-on-load 'always-save
-        cider-font-lock-dynamically '(macro core function var)
-        cider-overlays-use-font-lock t)
-  (cider-repl-toggle-pretty-printing))
+  (use-package cider
+    :diminish subword-mode
+    :functions (cider-repl-toggle-pretty-printing)
+    :config
+    (add-hook 'cider-mode-hook #'clj-refactor-mode)
+    (add-hook 'cider-mode-hook #'company-mode)
+    (add-hook 'cider-repl-mode-hook #'company-mode)
+    (add-hook 'cider-repl-mode-hook #'my/lisp-mode-hook)
+    (setq nrepl-log-messages t
+          cider-repl-display-in-current-window t
+          cider-repl-use-clojure-font-lock t
+          cider-prompt-save-file-on-load 'always-save
+          cider-font-lock-dynamically '(macro core function var)
+          cider-overlays-use-font-lock t)
+    (cider-repl-toggle-pretty-printing))
 
-(use-package clj-refactor
-  :diminish clj-refactor-mode
-  :config (cljr-add-keybindings-with-prefix "C-c j"))
+  (use-package clj-refactor
+    :diminish clj-refactor-mode
+    :config (cljr-add-keybindings-with-prefix "C-c j")))
 
 (message "init.el loaded!!")
 
