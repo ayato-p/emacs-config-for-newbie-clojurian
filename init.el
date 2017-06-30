@@ -1,9 +1,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
 ;;;
-;;; language env
+;;; general
 ;;;
 
+;;; setup language env
 (set-language-environment "UTF-8")
+
+;;; setup your user-emacs-directory
+(let* ((user-init-dir (file-name-as-directory (or (getenv "EMACS_USER_DIRECTORY")
+                                                  user-emacs-directory))))
+  (setq user-emacs-directory user-init-dir))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
 ;;;
