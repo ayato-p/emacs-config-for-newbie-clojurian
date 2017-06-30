@@ -1,20 +1,33 @@
 * Emacs config for newbie clojurian
 
-  #+begin_src shell
-  git clone git@github.com:ayato-p/emacs-config-for-newbie-clojurian.git .emacs.d
-  #+end_src
+** Requirement
 
-  #+begin_src clojure
-  ;; ~/.lein/profiles.clj
-  {:ancient {:plugins [[lein-ancient "0.6.10"]]}
-   :cljfmt {:plugins [[lein-cljfmt "0.5.6"]]}
-   :kibit {:plugins [[lein-kibit "0.1.5"]]}
+   * Emacs 25 or higher
 
-   :user
-   {:aliases
-    {"ancient" ["with-profile" "+ancient" "ancient"]
-     "cljfmt" ["with-profile" "+cljfmt" "cljfmt"]
-     "kibit" ["with-profile" "+kibit" "kibit"]}}}
-  #+end_src
+** Installation
 
-  [[img/clj-refactor-comb.gif]]
+   #+begin_src shell
+   # go to your home dir
+   cd ~/
+   # clone this repo
+   git clone git@github.com:ayato-p/emacs-config-for-newbie-clojurian.git .emacs.d
+   # install plugins
+   emacs --batch -l ~/.emacs.d/init.el
+   #+end_src
+
+** Optional
+
+   #+begin_src clojure
+   ;; ~/.lein/profiles.clj
+   {:ancient {:plugins [[lein-ancient "0.6.10"]]}
+    :cljfmt {:plugins [[lein-cljfmt "0.5.6"]]}
+    :kibit {:plugins [[lein-kibit "0.1.5"]]}
+
+    :user
+    {:aliases
+     {"ancient" ["with-profile" "+ancient" "ancient"]
+      "cljfmt" ["with-profile" "+cljfmt" "cljfmt"]
+      "kibit" ["with-profile" "+kibit" "kibit"]}}}
+   #+end_src
+
+   [[img/clj-refactor-comb.gif]]
