@@ -38,6 +38,7 @@
 
 ;;; load your preferred theme
 (use-package zenburn-theme
+  :if window-system
   :config
   (load-theme 'zenburn t))
 
@@ -88,17 +89,14 @@
   :config
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
-        company-selection-wrap-around t
-        company-global-modes '(prog-mode))
-  (global-company-mode))
+        company-selection-wrap-around t))
 
 ;;; magit
 (use-package magit
   :bind (("C-x g" . magit-status)))
 
 (use-package subword
-  :config
-  (global-subword-mode 1))
+  :commands subword-mode)
 
 ;;; answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -128,6 +126,7 @@
 
 ;; whitespace
 (use-package whitespace
+  :defer t
   :config
   (setq whitespace-style '(face
                            trailing
@@ -145,11 +144,6 @@
 
 ;;; cleanup whitespace before file save
 (add-hook 'before-save-hook 'whitespace-cleanup)
-
-(use-package hl-line
-  :config
-  (global-hl-line-mode 1)
-  (set-face-background 'hl-line "#525252"))
 
 ;;; modeline
 (setq display-time-string-forms
@@ -236,6 +230,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
 ;;;
+;;; programming languages
+;;;
+
+(use-package aggressive-indent
+  :commands aggressive-indent-mode)
+
+(defun my/prog-mode-hook ()
+  (aggressive-indent-mode 1)
+  (company-mode 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
+;;;
 ;;; lisp
 ;;;
 
@@ -249,13 +255,13 @@
   (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode))
 
 (use-package eldoc
-  :defer t
-  :config
+  :commands eldoc-mode
+  :init
   (setq eldoc-idle-delay 0.1
         eldoc-minor-mode-string ""))
 
 (use-package rainbow-delimiters
-  :defer t)
+  :commands rainbow-delimiters-mode)
 
 (defun my/lisp-mode-defaults ()
   (paredit-mode 1)
@@ -267,8 +273,10 @@
 
 (use-package lisp-mode
   :ensure nil
-  :mode ("\\.lisp\\'" "\\.el\\'")
-  :config
+  :mode (("\\.lisp\\'" . lisp-mode)
+         ("\\.el\\'" . emacs-lisp-mode))
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'my/prog-mode-hook)
   (add-hook 'emacs-lisp-mode-hook 'my/lisp-mode-hook))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
@@ -281,16 +289,16 @@
   :config
   (add-hook 'clojure-mode-hook #'yas-minor-mode)
   (add-hook 'clojure-mode-hook #'subword-mode)
+  (add-hook 'clojure-mode-hook #'company-mode)
+  (add-hook 'clojure-mode-hook #'clj-refactor-mode)
+  (add-hook 'clojure-mode-hook #'my/prog-mode-hook)
   (add-hook 'clojure-mode-hook #'my/lisp-mode-hook)
 
   (use-package cider
     :diminish subword-mode
     :functions (cider-repl-toggle-pretty-printing)
     :config
-    (add-hook 'cider-mode-hook #'clj-refactor-mode)
-    (add-hook 'cider-mode-hook #'company-mode)
     (add-hook 'cider-repl-mode-hook #'company-mode)
-    (add-hook 'cider-repl-mode-hook #'my/lisp-mode-hook)
     (setq nrepl-log-messages t
           cider-repl-display-in-current-window t
           cider-repl-use-clojure-font-lock t
