@@ -207,29 +207,25 @@
 ;;;
 
 (use-package helm
+  :bind (("M-x" . helm-M-x)
+         :map helm-map
+         ("C-h" . nil))
   :config
   (setq helm-quick-update t
         helm-buffers-fuzzy-matching t
-        helm-ff-transformer-show-only-basename nil)
-  (bind-keys :map global-map
-             ("M-x" . helm-M-x)))
+        helm-ff-transformer-show-only-basename nil))
 
 (use-package helm-projectile
   :config
+  (use-package helm-ls-git)
   (mykie:set-keys nil
     "C-x C-f"
     :default (call-interactively 'find-file)
     :C-u helm-projectile-find-file
+    :C-u*2! helm-ls-git-ls
     "C-x b"
     :default (call-interactively 'switch-to-buffer)
     :C-u helm-projectile-switch-to-buffer))
-
-(use-package helm-ls-git
-  :config
-  (mykie:set-keys nil
-    "C-x C-f"
-    :default (call-interactively 'find-file)
-    :C-u! helm-ls-git-ls))
 
 (use-package helm-ag
   :bind ("C-x C-g" . helm-do-ag-project-root))
