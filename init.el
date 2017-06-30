@@ -11,7 +11,7 @@
 ;;;
 
 (require 'package)
-;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 
@@ -29,7 +29,7 @@
 ;;; enable use-package
 (require 'use-package)
 (setq use-package-always-ensure t)
-;; (setq use-package-always-pin "melpa-stable")
+(setq use-package-always-pin "melpa-stable")
 (setq use-package-verbose t)
 
 ;;; load your preferred theme
@@ -62,31 +62,35 @@
 
 ;;; yasnippet
 (use-package yasnippet
+  :bind (:map yas-minor-mode-map
+         ("<tab>" . nil)
+         ("TAB" . nil)
+         ("C-i" . nil)
+         ("C-o" . yas/expand))
   :init
-  (yas-global-mode 1)
-  (bind-keys :map yas-minor-mode-map
-             ("<tab>" . nil)
-             ("TAB" . nil)
-             ("C-i" . nil)
-             ("C-o" . yas/expand)))
+  (yas-global-mode 1))
 
 ;;; comapany-mode!
 (use-package company
+  :bind (:map company-mode-map
+         ("C-i" . company-complete)
+         :map company-active-map
+         ("C-n" . company-select-next)
+         ("C-p" . company-select-previous)
+         ("C-s" . company-search-words-regexp)
+         :map company-search-map
+         ("C-n" . company-select-next)
+         ("C-p" . company-select-previous))
   :config
-  (global-company-mode)
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
-        company-selection-wrap-around t)
+        company-selection-wrap-around t
+        company-global-modes '(prog-mode))
+  (global-company-mode))
 
-  (bind-keys :map company-mode-map
-             ("C-i" . company-complete))
-  (bind-keys :map company-active-map
-             ("C-n" . company-select-next)
-             ("C-p" . company-select-previous)
-             ("C-s" . company-search-words-regexp))
-  (bind-keys :map company-search-map
-             ("C-n" . company-select-next)
-             ("C-p" . company-select-previous)))
+;;; magit
+(use-package magit
+  :bind (("C-x g" . magit-status)))
 
 ;;; projectile
 (use-package projectile
@@ -100,7 +104,7 @@
 ;;; answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;;; turn off graphical user interface
+;;; turn off graphical user interface if you want
 ;; (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
 ;;   (when (fboundp mode) (funcall mode -1)))
 
@@ -210,15 +214,15 @@
   (bind-keys :map global-map
              ("M-x" . helm-M-x)))
 
-;; (use-package helm-projectile
-;;   :config
-;;   (mykie:set-keys nil
-;;     "C-x C-f"
-;;     :default (call-interactively 'find-file)
-;;     :C-u helm-projectile-find-file
-;;     "C-x b"
-;;     :default (call-interactively 'switch-to-buffer)
-;;     :C-u helm-projectile-switch-to-buffer))
+(use-package helm-projectile
+  :config
+  (mykie:set-keys nil
+    "C-x C-f"
+    :default (call-interactively 'find-file)
+    :C-u helm-projectile-find-file
+    "C-x b"
+    :default (call-interactively 'switch-to-buffer)
+    :C-u helm-projectile-switch-to-buffer))
 
 (use-package helm-ls-git
   :config
@@ -236,18 +240,15 @@
 ;;;
 
 (use-package paredit
-  :defer t
+  :bind (:map paredit-mode-map
+         ("C-h" . paredit-backward-delete))
   :config
-  (bind-keys :map paredit-mode-map
-             ("C-h" . paredit-backward-delete))
-
   (defun conditionally-enable-paredit-mode ()
     (if (eq this-command 'eval-expression)
         (paredit-mode 1)))
   (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode))
 
 (use-package eldoc
-  :defer t
   :config
   (setq eldoc-idle-delay 0.1
         eldoc-minor-mode-string ""))
@@ -263,7 +264,11 @@
 (defun my/lisp-mode-hook ()
   (my/lisp-mode-defaults))
 
-(add-hook 'emacs-lisp-mode-hook 'my/lisp-mode-hook)
+
+(use-package lisp-mode
+  :ensure nil
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'my/lisp-mode-hook))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;
 ;;;
@@ -291,8 +296,6 @@
         cider-font-lock-dynamically '(macro core function var)
         cider-overlays-use-font-lock t)
   (cider-repl-toggle-pretty-printing))
-
-(use-package cider-eval-sexp-fu)
 
 (use-package clj-refactor
   :diminish clj-refactor-mode
