@@ -12,5 +12,5 @@ deploy: build
 	git add .
 	git commit -m ":fire:"
 	git push origin master
-	git tag $CURRENT_DATE
-	git push origin $CURRENT_DATE
+	git tag $(CURRENT_DATE)
+	git push origin $(CURRENT_DATE)
