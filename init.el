@@ -221,8 +221,8 @@
     :C-u helm-projectile-switch-to-buffer)
   :config
   (use-package projectile
-    :init
-    (projectile-global-mode))
+    :config
+    (projectile-mode 1))
   (use-package helm-ls-git))
 
 (use-package helm-ag
@@ -302,7 +302,7 @@
     (setq nrepl-log-messages t
           cider-repl-display-in-current-window t
           cider-repl-use-clojure-font-lock t
-          cider-prompt-save-file-on-load 'always-save
+          cider-save-file-on-load 'always-save
           cider-font-lock-dynamically '(macro core function var)
           cider-overlays-use-font-lock t)
     (cider-repl-toggle-pretty-printing))

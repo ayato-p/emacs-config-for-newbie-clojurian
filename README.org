@@ -11,9 +11,7 @@
    cd ~/
    # clone this repo
    git clone git@github.com:ayato-p/emacs-config-for-newbie-clojurian.git .emacs.d
-   # install plugins
-   emacs --batch -l ~/.emacs.d/init.el
-   # byte compile
+   # install plugins & byte compile
    emacs --batch -l ~/.emacs.d/init.el -f batch-byte-compile ~/.emacs.d/init.el
    #+end_src
 
