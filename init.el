@@ -89,9 +89,11 @@
          ("C-n" . company-select-next)
          ("C-p" . company-select-previous)
          ("C-s" . company-search-words-regexp)
+         ("C-h" . nil)
          :map company-search-map
          ("C-n" . company-select-next)
-         ("C-p" . company-select-previous))
+         ("C-p" . company-select-previous)
+         ("C-h" . nil))
   :config
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
