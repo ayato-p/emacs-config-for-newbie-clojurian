@@ -74,24 +74,26 @@
 ;;; yasnippet
 (use-package yasnippet
   :bind (:map yas-minor-mode-map
-         ("<tab>" . nil)
-         ("TAB" . nil)
-         ("C-i" . nil)
-         ("C-o" . yas-expand))
+              ("<tab>" . nil)
+              ("TAB" . nil)
+              ("C-i" . nil)
+              ("C-o" . yas-expand))
   :config
   (yas-global-mode 1))
 
 ;;; comapany-mode!
 (use-package company
   :bind (:map company-mode-map
-         ("C-i" . company-complete)
-         :map company-active-map
-         ("C-n" . company-select-next)
-         ("C-p" . company-select-previous)
-         ("C-s" . company-search-words-regexp)
-         :map company-search-map
-         ("C-n" . company-select-next)
-         ("C-p" . company-select-previous))
+              ("C-i" . company-complete)
+              :map company-active-map
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("C-s" . company-search-words-regexp)
+              ("C-h" . nil)
+              :map company-search-map
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("C-h" . nil))
   :config
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
@@ -218,13 +220,13 @@
   :commands (helm-projectile-find-file helm-projectile-switch-to-buffer)
   :init
   (mykie:set-keys nil
-    "C-x C-f"
-    :default (call-interactively 'find-file)
-    :C-u helm-projectile-find-file
-    :C-u*2! helm-ls-git-ls
-    "C-x b"
-    :default (call-interactively 'switch-to-buffer)
-    :C-u helm-projectile-switch-to-buffer)
+                  "C-x C-f"
+                  :default (call-interactively 'find-file)
+                  :C-u helm-projectile-find-file
+                  :C-u*2! helm-ls-git-ls
+                  "C-x b"
+                  :default (call-interactively 'switch-to-buffer)
+                  :C-u helm-projectile-switch-to-buffer)
   :config
   (use-package projectile
     :config
@@ -253,7 +255,7 @@
 
 (use-package paredit
   :bind (:map paredit-mode-map
-         ("C-h" . paredit-backward-delete))
+              ("C-h" . paredit-backward-delete))
   :config
   (defun conditionally-enable-paredit-mode ()
     (if (eq this-command 'eval-expression)
