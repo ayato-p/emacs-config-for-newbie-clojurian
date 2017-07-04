@@ -6,12 +6,28 @@
 
 ** Installation
 
-   #+begin_src shell
-   # clone this repo
-   git clone git@github.com:ayato-p/emacs-config-for-newbie-clojurian.git ~/.emacs.d
-   # install plugins
-   cd ~/.emacs.d && make install
-   #+end_src
+*** Linux(or Mac OS X?)
+
+    #+begin_src shell
+    # clone this repo
+    git clone --depth=1 https://github.com/ayato-p/emacs-config-for-newbie-clojurian.git ~/.emacs.d
+    # install plugins
+    cd ~/.emacs.d && make install
+    #+end_src
+
+*** Windows
+
+    #+begin_src shell
+    # go to home
+    Set-Location $HOME
+    # clone this repo
+    git clone --depth=1 https://github.com/ayato-p/emacs-config-for-newbie-clojurian.git .emacs.d
+    # install plugins
+    Set-Location .emacs.d
+    .\install.ps1
+    #+end_src
+
+    Note: Make sure add =HOME= variable to your user-environment-variables
 
 ** Optional
 
